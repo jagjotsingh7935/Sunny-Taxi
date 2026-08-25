@@ -1,0 +1,411 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01', 'tnum';
+  }
+
+  body {
+    @apply bg-paper font-sans text-fluid-base text-ink-soft antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01', 'tnum';
+    overflow-x: hidden;
+    letter-spacing: -0.005em;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold text-ink;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    letter-spacing: -0.035em;
+    font-weight: 800;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid #d97706;
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  /* Dark bands invert the focus ring so it stays visible */
+  .on-dark :focus-visible {
+    outline-color: #fcd34d;
+  }
+
+  ::selection {
+    background: rgba(245, 158, 11, 0.28);
+    color: #0b0f19;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ---------- Form controls: light by default ---------- */
+  input,
+  select,
+  textarea {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-sans text-fluid-sm font-semibold
+      shadow-sm transition-colors duration-200 placeholder:text-slate-400;
+    min-height: 46px;
+    letter-spacing: -0.005em;
+    color: #0f172a;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    @apply border-gold-deep outline-none ring-2 ring-gold/30;
+  }
+
+  /* ---------- Form controls inside a dark band ---------- */
+  .on-dark input,
+  .on-dark select,
+  .on-dark textarea {
+    @apply border-white/15 bg-white/[0.06] text-platinum shadow-none placeholder:text-white/40;
+  }
+
+  .on-dark input:focus,
+  .on-dark select:focus,
+  .on-dark textarea:focus {
+    @apply border-gold/60 bg-white/[0.09] ring-gold/25;
+  }
+
+  .on-dark select option {
+    @apply bg-charcoal text-platinum;
+  }
+
+  /* Form controls inside white card inside dark section */
+  .on-dark .bg-white input,
+  .on-dark .bg-white select,
+  .on-dark .bg-white textarea,
+  .on-dark .card input,
+  .on-dark .card select,
+  .on-dark .card textarea {
+    border-color: #cbd5e1;
+    background-color: #ffffff;
+    color: #0f172a !important;
+    font-weight: 700;
+  }
+
+  .on-dark .bg-white select option,
+  .on-dark .card select option {
+    background-color: #ffffff;
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  .on-dark .bg-white input[type='date'],
+  .on-dark .bg-white input[type='time'],
+  .on-dark .bg-white input[type='datetime-local'],
+  .on-dark .card input[type='date'],
+  .on-dark .card input[type='time'],
+  .on-dark .card input[type='datetime-local'] {
+    color-scheme: light;
+    color: #0f172a !important;
+    font-weight: 700;
+    background-color: #ffffff;
+  }
+
+  input[type='date'],
+  input[type='time'],
+  input[type='datetime-local'] {
+    color-scheme: light;
+    color: #0f172a !important;
+    font-weight: 700;
+    background-color: #ffffff;
+  }
+
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-calendar-picker-indicator,
+  input[type='datetime-local']::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.2) sepia(1) saturate(6) hue-rotate(5deg);
+    opacity: 0.95;
+  }
+
+  input[type='datetime-local']::-webkit-datetime-edit {
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  input[type='datetime-local']::-webkit-datetime-edit-fields-wrapper {
+    color: #0f172a;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  /* ================= Surfaces ================= */
+
+  /** Light card - the default across the site. */
+  .card {
+    @apply rounded-2xl border border-line bg-white shadow-card;
+  }
+
+  /** Softer light card for nested panels and form groups. */
+  .card-muted {
+    @apply rounded-2xl border border-line bg-paper-alt/60;
+  }
+
+  /** Glass card for use on top of dark bands and imagery. */
+  .card-dark {
+    @apply rounded-2xl border border-white/12 shadow-dark-card;
+    background: rgba(19, 26, 40, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  /** Full-width dark band. Pair with the .on-dark utility on the same element. */
+  .band-dark {
+    @apply bg-obsidian text-platinum;
+    background-image:
+      radial-gradient(760px 420px at 12% 0%, rgba(245, 158, 11, 0.18), transparent 62%),
+      radial-gradient(620px 380px at 88% 8%, rgba(237, 239, 245, 0.06), transparent 65%),
+      linear-gradient(180deg, #080c15 0%, #101726 58%, #080c15 100%);
+  }
+
+  /** Alternating light band, one step down from paper. */
+  .band-alt {
+    @apply bg-paper-alt/70;
+  }
+
+  /* ================= Typography helpers ================= */
+
+  .eyebrow {
+    @apply text-[0.72rem] font-bold uppercase tracking-luxury text-gold-ink;
+    font-family: 'Cinzel', serif;
+  }
+
+  .on-dark .eyebrow {
+    @apply text-gold-light;
+  }
+
+  .field-label {
+    @apply mb-1.5 block font-sans text-[0.72rem] font-bold uppercase tracking-label text-slate-800;
+  }
+
+  .on-dark .field-label {
+    @apply text-white/60;
+  }
+
+  .on-dark .bg-white .field-label,
+  .on-dark .card .field-label,
+  .on-dark [data-hero-widget] .field-label {
+    color: #1e293b !important;
+  }
+
+  .on-dark .bg-white input::placeholder,
+  .on-dark .card input::placeholder,
+  .on-dark [data-hero-widget] input::placeholder {
+    color: #64748b !important;
+    opacity: 1 !important;
+  }
+
+  /** Gold text that stays legible on light surfaces. */
+  .gold-text {
+    background: linear-gradient(120deg, #b45309 0%, #92400e 60%, #78350f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .on-dark .gold-text {
+    background: linear-gradient(120deg, #fef08a 0%, #f59e0b 48%, #d97706 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hairline {
+    @apply h-px w-full bg-line;
+  }
+
+  .on-dark .hairline {
+    @apply bg-white/10;
+  }
+
+  /* ================= Buttons ================= */
+
+  .btn-gold {
+    @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full bg-gold-gradient
+      px-6 py-3 text-fluid-sm font-semibold text-obsidian shadow-card transition-all duration-300
+      hover:shadow-gold hover:brightness-[1.06] active:scale-[0.985]
+      disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:shadow-card;
+  }
+
+  .btn-ink {
+    @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full bg-ink px-6 py-3
+      text-fluid-sm font-semibold text-white transition-all duration-300 hover:bg-ink/90
+      active:scale-[0.985];
+  }
+
+  .btn-ghost {
+    @apply inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full border border-line
+      bg-white px-6 py-3 text-fluid-sm font-medium text-ink transition-all duration-300
+      hover:border-gold-deep/50 hover:bg-paper-alt active:scale-[0.985];
+  }
+
+  .on-dark .btn-ghost {
+    @apply border-white/18 bg-white/[0.05] text-platinum hover:border-gold/50 hover:bg-white/[0.1];
+  }
+
+  /* ================= Chips ================= */
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-line bg-paper-alt/70 px-3 py-1
+      text-fluid-xs font-medium text-ink-soft;
+  }
+
+  .on-dark .chip {
+    @apply border-white/12 bg-white/[0.06] text-white/70;
+  }
+
+  .chip-gold {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-gold-deep/30 bg-gold/10 px-3
+      py-1 text-fluid-xs font-semibold text-gold-ink;
+  }
+
+  .on-dark .chip-gold {
+    @apply border-gold/35 bg-gold/12 text-gold-light;
+  }
+
+  .chip-verified {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-verified/25 bg-verified/10
+      px-3 py-1 text-fluid-xs font-semibold text-verified;
+  }
+
+  /* ================= Layout ================= */
+
+  .shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-y {
+    @apply py-14 sm:py-20 lg:py-24;
+  }
+}
+
+/* ---------- Leaflet: High-definition, sharp map rendering ---------- */
+.leaflet-container {
+  background: #f1f5f9;
+  font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.leaflet-tile {
+  /* Prevent any browser subpixel blur on high-DPI screens */
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.leaflet-tile-pane {
+  filter: none !important;
+}
+
+.leaflet-control-zoom {
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+}
+
+.leaflet-control-zoom a {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  font-weight: 700 !important;
+  transition: all 0.15s ease;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.88) !important;
+  color: #475569 !important;
+  font-size: 10px !important;
+  backdrop-filter: blur(6px);
+  border-radius: 6px 0 0 0 !important;
+}
+
+.leaflet-control-attribution a {
+  color: #b45309 !important;
+  font-weight: 600;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #ffffff;
+  color: #0f1523;
+  border: 1px solid #e1e5ec;
+  box-shadow: 0 20px 50px -25px rgba(15, 21, 35, 0.5);
+}
+
+.leaflet-popup-content {
+  margin: 12px 16px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.csc-pin-wrap {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.route-line-flow {
+  stroke-dasharray: 10 14;
+  animation: dash-flow 22s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.6);
+    opacity: 0;
+  }
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
