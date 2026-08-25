@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Clock, Layers, Loader2, MapPin, Navigation, Route as RouteIcon } from 'lucide-react';
@@ -231,6 +231,9 @@ const makeIcon = (fill: string, glow: string, glyph: string) =>
 const pickupIcon = makeIcon('#D4AF37', '#D4AF37', 'A');
 const dropoffIcon = makeIcon('#1E293B', '#334155', 'B');
 
+/** Built once at module load so re-renders never rebuild Leaflet marker DOM for the static hubs. */
+const hubIconById = new Map<string, L.DivIcon>();
+
 const hubIcon = (name: string, emoji: string) =>
   L.divIcon({
     className: 'csc-hub-pin',
@@ -242,6 +245,10 @@ const hubIcon = (name: string, emoji: string) =>
     iconAnchor: [65, 13],
   });
 
+melbourneHubs.forEach((hub) => {
+  hubIconById.set(hub.id, hubIcon(hub.name.split('/')[0].trim(), hub.emoji));
+});
+
 /* ---------------------- Camera choreography ---------------------- */
 
 interface CameraProps {
@@ -252,9 +259,19 @@ interface CameraProps {
 
 function MapCamera({ pickup, dropoff, points }: CameraProps) {
   const map = useMap();
+  const lastTargetRef = useRef<string>('');
 
   useEffect(() => {
+    if (!pickup && !dropoff) {
+      lastTargetRef.current = 'melbourne';
+      return;
+    }
+
     if (pickup && dropoff) {
+      const targetKey = `${pickup.lat.toFixed(4)},${pickup.lng.toFixed(4)}->${dropoff.lat.toFixed(4)},${dropoff.lng.toFixed(4)}`;
+      if (lastTargetRef.current === targetKey) return;
+      lastTargetRef.current = targetKey;
+
       const coords: L.LatLngExpression[] =
         points.length > 1
           ? points.map((p) => [p.lat, p.lng])
@@ -262,33 +279,48 @@ function MapCamera({ pickup, dropoff, points }: CameraProps) {
               [pickup.lat, pickup.lng],
               [dropoff.lat, dropoff.lng],
             ];
-      map.flyToBounds(L.latLngBounds(coords), {
-        padding: [60, 60],
-        duration: 1.5,
-        easeLinearity: 0.22,
-        maxZoom: 15,
-      });
+
+      const bounds = L.latLngBounds(coords);
+      if (bounds.isValid()) {
+        map.stop();
+        map.flyToBounds(bounds, {
+          padding: [50, 50],
+          duration: 0.9,
+          easeLinearity: 0.25,
+          maxZoom: 15,
+        });
+      }
       return;
     }
 
     const single = pickup ?? dropoff;
     if (single) {
-      map.flyTo([single.lat, single.lng], 15, { duration: 1.4, easeLinearity: 0.24 });
+      const targetKey = `${single.lat.toFixed(4)},${single.lng.toFixed(4)}`;
+      if (lastTargetRef.current === targetKey) return;
+      lastTargetRef.current = targetKey;
+
+      map.stop();
+      map.flyTo([single.lat, single.lng], 14, { duration: 0.8, easeLinearity: 0.25 });
     }
-  }, [map, pickup, dropoff, points]);
+  }, [map, pickup?.lat, pickup?.lng, dropoff?.lat, dropoff?.lng, points.length]);
 
   return null;
 }
 
-/** Keeps Leaflet's internal size correct when the split-screen layout reflows. */
+/** Keeps Leaflet's internal size correct when the split-screen layout reflows without lag. */
 function ResizeGuard() {
   const map = useMap();
   useEffect(() => {
-    const invalidate = () => map.invalidateSize();
-    const id = window.setTimeout(invalidate, 260);
+    let resizeTimer: number;
+    const invalidate = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        map.invalidateSize({ animate: false });
+      }, 200);
+    };
     window.addEventListener('resize', invalidate);
     return () => {
-      window.clearTimeout(id);
+      window.clearTimeout(resizeTimer);
       window.removeEventListener('resize', invalidate);
     };
   }, [map]);
@@ -308,7 +340,7 @@ interface LuxuryMapProps {
   zoom?: number;
 }
 
-export function LuxuryMap({
+export const LuxuryMap = memo(function LuxuryMap({
   pickup,
   dropoff,
   geometry,
@@ -318,12 +350,79 @@ export function LuxuryMap({
   interactive = true,
   zoom = 12,
 }: LuxuryMapProps) {
-  const { setPickup, setDropoff } = useBookingStore();
+  // Selecting individual actions (instead of destructuring the whole store) keeps this
+  // component from re-rendering — and re-touching every Leaflet marker — on unrelated
+  // store updates such as the routing/geometry churn that happens while searching.
+  const setPickup = useBookingStore((s) => s.setPickup);
+  const setDropoff = useBookingStore((s) => s.setDropoff);
   const [mapLayer, setMapLayer] = useState<'osm' | 'voyager'>('osm');
+  const [isSmallScreen, setIsSmallScreen] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false,
+  );
+
+  useEffect(() => {
+    const onResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   const line = useMemo<L.LatLngExpression[]>(
     () => (geometry?.points ?? []).map((p) => [p.lat, p.lng]),
     [geometry],
+  );
+
+  const hubMarkers = useMemo(
+    () =>
+      melbourneHubs.map((hub) => (
+        <Marker key={hub.id} position={[hub.lat, hub.lng]} icon={hubIconById.get(hub.id)}>
+          <Popup>
+            <div className="p-1 min-w-[200px]">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base">{hub.emoji}</span>
+                <strong className="text-slate-900 font-bold text-sm leading-tight">{hub.name}</strong>
+              </div>
+              <p className="mt-1 text-xs text-slate-600 font-medium">
+                {hub.suburb}, VIC {hub.postcode}
+              </p>
+              <div className="mt-2.5 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPickup({
+                      label: `${hub.name}, ${hub.suburb} VIC ${hub.postcode}`,
+                      lat: hub.lat,
+                      lng: hub.lng,
+                      suburb: hub.suburb,
+                      postcode: hub.postcode,
+                    })
+                  }
+                  className="flex-1 rounded-md bg-gold-gradient py-1 px-2 text-[0.68rem] font-bold text-obsidian text-center transition hover:brightness-105 active:scale-95"
+                >
+                  Set as Pickup
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setDropoff({
+                      label: `${hub.name}, ${hub.suburb} VIC ${hub.postcode}`,
+                      lat: hub.lat,
+                      lng: hub.lng,
+                      suburb: hub.suburb,
+                      postcode: hub.postcode,
+                    })
+                  }
+                  className="flex-1 rounded-md bg-slate-900 py-1 px-2 text-[0.68rem] font-bold text-white text-center transition hover:bg-slate-800 active:scale-95"
+                >
+                  Set as Destination
+                </button>
+              </div>
+            </div>
+          </Popup>
+        </Marker>
+      )),
+    [setPickup, setDropoff],
   );
 
   return (
@@ -361,58 +460,8 @@ export function LuxuryMap({
         <ResizeGuard />
         <MapCamera pickup={pickup} dropoff={dropoff} points={geometry?.points ?? []} />
 
-        {/* Detailed Melbourne Location Hubs (Interactive) */}
-        {melbourneHubs.map((hub) => (
-          <Marker
-            key={hub.id}
-            position={[hub.lat, hub.lng]}
-            icon={hubIcon(hub.name.split('/')[0].trim(), hub.emoji)}
-          >
-            <Popup>
-              <div className="p-1 min-w-[200px]">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-base">{hub.emoji}</span>
-                  <strong className="text-slate-900 font-bold text-sm leading-tight">{hub.name}</strong>
-                </div>
-                <p className="mt-1 text-xs text-slate-600 font-medium">
-                  {hub.suburb}, VIC {hub.postcode}
-                </p>
-                <div className="mt-2.5 flex items-center gap-1.5 pt-2 border-t border-slate-200">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setPickup({
-                        label: `${hub.name}, ${hub.suburb} VIC ${hub.postcode}`,
-                        lat: hub.lat,
-                        lng: hub.lng,
-                        suburb: hub.suburb,
-                        postcode: hub.postcode,
-                      })
-                    }
-                    className="flex-1 rounded-md bg-gold-gradient py-1 px-2 text-[0.68rem] font-bold text-obsidian text-center transition hover:brightness-105 active:scale-95"
-                  >
-                    Set as Pickup
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setDropoff({
-                        label: `${hub.name}, ${hub.suburb} VIC ${hub.postcode}`,
-                        lat: hub.lat,
-                        lng: hub.lng,
-                        suburb: hub.suburb,
-                        postcode: hub.postcode,
-                      })
-                    }
-                    className="flex-1 rounded-md bg-slate-900 py-1 px-2 text-[0.68rem] font-bold text-white text-center transition hover:bg-slate-800 active:scale-95"
-                  >
-                    Set as Destination
-                  </button>
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {/* Detailed Melbourne Location Hubs (Interactive) — hidden on small screens when in Navigation HD mode */}
+        {(!isSmallScreen || mapLayer !== 'voyager') && hubMarkers}
 
         {line.length > 1 && (
           <>
@@ -550,4 +599,4 @@ export function LuxuryMap({
       )}
     </div>
   );
-}
+});

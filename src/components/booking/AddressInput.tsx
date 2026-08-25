@@ -54,6 +54,7 @@ export function AddressInput({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const wrapRef = useRef<HTMLDivElement | null>(null);
+  const latestQueryRef = useRef(query);
 
   useEffect(() => {
     setQuery(value?.label ?? '');
@@ -69,6 +70,7 @@ export function AddressInput({
 
   // Update suggestions immediately on query change
   useEffect(() => {
+    latestQueryRef.current = query;
     const local = localSuggestions(query);
     setOptions(local);
 
@@ -76,6 +78,9 @@ export function AddressInput({
       setLoading(true);
       const timer = window.setTimeout(async () => {
         const results = await suggestPlaces(query);
+        // Ignore replies that outlive a newer keystroke, so a slow response can't
+        // clobber fresher results and make the list appear to jump/flicker.
+        if (latestQueryRef.current !== query) return;
         setOptions(results);
         setLoading(false);
       }, 350);
@@ -95,6 +100,25 @@ export function AddressInput({
     onChange(option);
     setQuery(option.label);
     setOpen(false);
+  };
+
+  const commitQuery = (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed) {
+      onChange(null);
+      return;
+    }
+    const match = options.find((o) => o.label.toLowerCase() === trimmed.toLowerCase());
+    if (match) {
+      onChange(match);
+    } else {
+      onChange({
+        label: trimmed,
+        suburb: trimmed.split(',')[0].trim() || 'Melbourne',
+        lat: value?.lat ?? -37.8136,
+        lng: value?.lng ?? 144.9631,
+      });
+    }
   };
 
   const dotColour = tone === 'gold' ? 'bg-gold-deep' : 'bg-ink-muted';
@@ -133,42 +157,18 @@ export function AddressInput({
             setOpen(true);
             if (!val.trim()) {
               onChange(null);
-            } else {
-              onChange({
-                label: val.trim(),
-                suburb: val.split(',')[0].trim() || 'Melbourne',
-                lat: value?.lat ?? -37.8136,
-                lng: value?.lng ?? 144.9631,
-              });
             }
           }}
           onBlur={() => {
-            if (query.trim()) {
-              const match = options.find((o) => o.label.toLowerCase() === query.trim().toLowerCase());
-              if (match) {
-                onChange(match);
-              } else {
-                onChange({
-                  label: query.trim(),
-                  suburb: query.split(',')[0].trim() || 'Melbourne',
-                  lat: value?.lat ?? -37.8136,
-                  lng: value?.lng ?? 144.9631,
-                });
-              }
-            }
+            commitQuery(query);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
               if (options.length > 0) {
                 handleSelectOption(options[0]);
-              } else if (query.trim()) {
-                onChange({
-                  label: query.trim(),
-                  suburb: query.split(',')[0].trim() || 'Melbourne',
-                  lat: value?.lat ?? -37.8136,
-                  lng: value?.lng ?? 144.9631,
-                });
+              } else {
+                commitQuery(query);
                 setOpen(false);
               }
             } else if (e.key === 'Escape') {

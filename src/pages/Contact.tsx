@@ -19,6 +19,14 @@ const subjects = [
 
 const regions = Array.from(new Set(mockSuburbs.map((s) => s.region)));
 
+const office = {
+  label: BRAND.address,
+  suburb: 'Deanside',
+  postcode: '3336',
+  lat: -37.7478,
+  lng: 144.7176,
+};
+
 export default function Contact() {
   const ref = useScrollReveal<HTMLDivElement>();
   const { notify } = useToast();
@@ -53,14 +61,6 @@ export default function Contact() {
       setForm({ name: '', email: '', phone: '', subject: subjects[0], message: '' });
       notify('success', 'Message sent', result.message);
     }
-  };
-
-  const office = {
-    label: BRAND.address,
-    suburb: 'Deanside',
-    postcode: '3336',
-    lat: -37.7478,
-    lng: 144.7176,
   };
 
   return (

@@ -10,9 +10,9 @@ export function SectionHeading({ eyebrow, title, description, align = 'center' }
   return (
     <div className={`flex max-w-2xl flex-col gap-3 sm:gap-4 ${alignment}`} data-reveal>
       <span className="eyebrow">{eyebrow}</span>
-      <h2 className="text-fluid-h2">{title}</h2>
+      <h2 className="text-fluid-h2 text-ink [.on-dark_&]:text-platinum font-bold">{title}</h2>
       {description && (
-        <p className="max-w-prose text-fluid-base text-ink-muted [.on-dark_&]:text-white/60">
+        <p className="max-w-prose text-fluid-base text-ink-muted [.on-dark_&]:text-white/70">
           {description}
         </p>
       )}

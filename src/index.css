@@ -32,6 +32,13 @@
     text-wrap: balance;
   }
 
+  .on-dark h1,
+  .on-dark h2,
+  .on-dark h3,
+  .on-dark h4 {
+    color: #edeef5;
+  }
+
   h1 {
     letter-spacing: -0.035em;
     font-weight: 800;

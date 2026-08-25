@@ -28,6 +28,8 @@ interface BookingState {
   recalculate: () => Promise<void>;
 }
 
+let recalcTimer: ReturnType<typeof setTimeout> | undefined;
+
 export const useBookingStore = create<BookingState>((set, get) => ({
   tab: 'fixed',
   pickup: null,
@@ -42,21 +44,35 @@ export const useBookingStore = create<BookingState>((set, get) => ({
   setTab: (tab) => set({ tab }),
 
   setPickup: (place) => {
+    const prev = get().pickup;
+    if (prev && place && prev.lat === place.lat && prev.lng === place.lng && prev.label === place.label) {
+      return;
+    }
     set({
       pickup: place,
       selectedRouteId: null,
       mapFocus: place ? { lat: place.lat, lng: place.lng } : get().mapFocus,
     });
-    void get().recalculate();
+    if (recalcTimer) clearTimeout(recalcTimer);
+    recalcTimer = setTimeout(() => {
+      void get().recalculate();
+    }, 180);
   },
 
   setDropoff: (place) => {
+    const prev = get().dropoff;
+    if (prev && place && prev.lat === place.lat && prev.lng === place.lng && prev.label === place.label) {
+      return;
+    }
     set({
       dropoff: place,
       selectedRouteId: null,
       mapFocus: place ? { lat: place.lat, lng: place.lng } : get().mapFocus,
     });
-    void get().recalculate();
+    if (recalcTimer) clearTimeout(recalcTimer);
+    recalcTimer = setTimeout(() => {
+      void get().recalculate();
+    }, 180);
   },
 
   setVehicle: (vehicleId) => set({ vehicleId }),
