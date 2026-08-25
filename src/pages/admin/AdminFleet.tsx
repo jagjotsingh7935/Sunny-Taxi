@@ -86,12 +86,12 @@ export default function AdminFleet() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-5 sm:space-y-6 max-w-7xl mx-auto min-w-0 max-w-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div>
           <span className="eyebrow">Vehicle Classes &amp; Capacities</span>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+          <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
             Fleet Management ({vehicles.length})
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
@@ -102,7 +102,7 @@ export default function AdminFleet() {
         <button
           type="button"
           onClick={() => setConfirmRestoreOpen(true)}
-          className="flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0"
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0 self-start sm:self-auto"
         >
           <RotateCcw className="h-4 w-4 text-amber-700" />
           <span>Restore Demo Fleet</span>
@@ -110,27 +110,27 @@ export default function AdminFleet() {
       </div>
 
       {/* Fleet Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 min-w-0">
         {vehicles.map((v) => (
           <div
             key={v.id}
-            className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm flex flex-col justify-between hover:border-gold-deep/40 transition"
+            className="bg-white rounded-3xl border border-slate-200 p-4 sm:p-6 shadow-sm flex flex-col justify-between hover:border-gold-deep/40 transition min-w-0 max-w-full overflow-hidden"
           >
-            <div>
+            <div className="min-w-0">
               <div className="flex items-start justify-between gap-2">
-                <div>
+                <div className="min-w-0 flex-1">
                   <span className="text-[0.65rem] font-bold uppercase tracking-wider text-gold-deep bg-gold/10 px-2.5 py-0.5 rounded-full">
                     {v.id}
                   </span>
-                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 mt-1.5 leading-tight">
+                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 mt-1.5 leading-tight truncate">
                     {v.name}
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">{v.tagline}</p>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5 break-words">{v.tagline}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => openEditModal(v)}
-                  className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-gold/15 hover:border-gold-deep/40 hover:text-gold-deep transition"
+                  className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-gold/15 hover:border-gold-deep/40 hover:text-gold-deep transition shrink-0"
                 >
                   <Edit2 className="h-3.5 w-3.5" />
                   <span>Edit</span>
@@ -138,18 +138,18 @@ export default function AdminFleet() {
               </div>
 
               {/* Specs Badge Bar */}
-              <div className="mt-4 flex flex-wrap gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+              <div className="mt-3.5 flex flex-wrap gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
                 <div className="flex items-center gap-1.5 text-slate-700 font-bold">
-                  <Users className="h-4 w-4 text-gold-deep" />
+                  <Users className="h-4 w-4 text-gold-deep shrink-0" />
                   <span>Up to {v.passengers} Passengers</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-slate-700 font-bold">
-                  <Briefcase className="h-4 w-4 text-gold-deep" />
+                  <Briefcase className="h-4 w-4 text-gold-deep shrink-0" />
                   <span>{v.largeSuitcases} Large + {v.carryOn} Carry-on</span>
                 </div>
               </div>
 
-              <p className="mt-3 text-xs text-slate-600 leading-relaxed font-normal">
+              <p className="mt-3 text-xs text-slate-600 leading-relaxed font-normal break-words">
                 {v.description}
               </p>
 
@@ -176,14 +176,14 @@ export default function AdminFleet() {
               </div>
             </div>
 
-            <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div className="mt-4 sm:mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
               <div>
-                <span className="text-[0.65rem] uppercase tracking-wider text-slate-400 font-semibold">Pricing Multiplier</span>
-                <p className="text-sm font-bold text-slate-900">{v.multiplier}x Base Rate</p>
+                <span className="text-[0.65rem] uppercase tracking-wider text-slate-400 font-semibold">Multiplier</span>
+                <p className="text-xs sm:text-sm font-bold text-slate-900">{v.multiplier}x Base Rate</p>
               </div>
               <div>
-                <span className="text-[0.65rem] uppercase tracking-wider text-slate-400 font-semibold text-right block">Base Starting Rate</span>
-                <p className="text-base font-extrabold text-gold-deep text-right">{currency(v.baseFare)}</p>
+                <span className="text-[0.65rem] uppercase tracking-wider text-slate-400 font-semibold text-right block">Starting Rate</span>
+                <p className="text-sm sm:text-base font-extrabold text-gold-deep text-right">{currency(v.baseFare)}</p>
               </div>
             </div>
           </div>
@@ -192,16 +192,16 @@ export default function AdminFleet() {
 
       {/* Edit Vehicle Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-extrabold text-slate-900 text-base">
-                Edit Vehicle Class: {name}
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base truncate pr-2">
+                Edit Vehicle: {name}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg shrink-0"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -240,7 +240,7 @@ export default function AdminFleet() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Passengers</label>
                   <input
@@ -279,7 +279,7 @@ export default function AdminFleet() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Base Fare ($)</label>
                   <input

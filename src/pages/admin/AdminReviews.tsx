@@ -101,12 +101,12 @@ export default function AdminReviews() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-5 sm:space-y-6 max-w-7xl mx-auto min-w-0 max-w-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div>
           <span className="eyebrow">Client Feedback &amp; Social Proof</span>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+          <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
             Reviews &amp; Testimonials ({reviews.length})
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
@@ -114,20 +114,20 @@ export default function AdminReviews() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <button
             type="button"
             onClick={() => setConfirmRestoreOpen(true)}
-            className="flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0"
+            className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0"
           >
-            <RotateCcw className="h-4 w-4 text-amber-700" />
+            <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
             <span>Restore Demo Reviews</span>
           </button>
 
           <button
             type="button"
             onClick={openCreateModal}
-            className="flex items-center gap-1.5 rounded-xl bg-gold-gradient px-4 py-2.5 text-xs font-bold text-obsidian shadow-gold transition hover:brightness-105 active:scale-95 shrink-0"
+            className="flex items-center justify-center gap-1.5 rounded-xl bg-gold-gradient px-4 py-2 text-xs font-bold text-obsidian shadow-gold transition hover:brightness-105 active:scale-95 shrink-0"
           >
             <Plus className="h-4 w-4" />
             <span>Add Testimonial</span>
@@ -136,28 +136,28 @@ export default function AdminReviews() {
       </div>
 
       {/* Reviews Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 min-w-0">
         {reviews.map((r) => (
           <div
             key={r.id}
-            className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm hover:border-gold-deep/40 transition flex flex-col justify-between"
+            className="bg-white rounded-3xl border border-slate-200 p-4 sm:p-6 shadow-sm hover:border-gold-deep/40 transition flex flex-col justify-between min-w-0 max-w-full overflow-hidden"
           >
-            <div>
+            <div className="min-w-0">
               <div className="flex items-start justify-between gap-2 pb-3 border-b border-slate-100">
-                <div>
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <span className="font-extrabold text-slate-900 text-sm">{r.name}</span>
+                    <span className="font-extrabold text-slate-900 text-sm truncate">{r.name}</span>
                     {r.verified && (
-                      <span title="Verified Customer">
+                      <span title="Verified Customer" className="shrink-0">
                         <BadgeCheck className="h-4 w-4 text-emerald-600" />
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-500 font-medium">{r.suburb}, VIC</p>
+                  <p className="text-xs text-slate-500 font-medium truncate">{r.suburb}, VIC</p>
                 </div>
 
                 {/* Stars */}
-                <div className="flex items-center gap-0.5 text-amber-500">
+                <div className="flex items-center gap-0.5 text-amber-500 shrink-0">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
@@ -170,7 +170,7 @@ export default function AdminReviews() {
               </div>
 
               {/* Trip & Vehicle Tag */}
-              <div className="mt-3 flex flex-wrap gap-2 text-[0.7rem]">
+              <div className="mt-3 flex flex-wrap gap-1.5 sm:gap-2 text-[0.7rem]">
                 <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md font-semibold">
                   {r.tripType}
                 </span>
@@ -182,12 +182,12 @@ export default function AdminReviews() {
                 <span className="text-slate-400 self-center">· {r.date}</span>
               </div>
 
-              <p className="mt-3 text-xs sm:text-sm text-slate-700 leading-relaxed italic font-medium">
+              <p className="mt-3 text-xs sm:text-sm text-slate-700 leading-relaxed italic font-medium break-words">
                 “{r.comment}”
               </p>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={() => handleToggleVerified(r.id, r.name, r.verified)}
@@ -197,7 +197,7 @@ export default function AdminReviews() {
                     : 'bg-slate-100 text-slate-600 border-slate-200'
                 }`}
               >
-                {r.verified ? '✓ Verified Badge Active' : 'Unverified'}
+                {r.verified ? '✓ Verified' : 'Unverified'}
               </button>
 
               <div className="flex items-center gap-1.5">
@@ -224,7 +224,7 @@ export default function AdminReviews() {
       </div>
 
       {reviews.length === 0 && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-500 shadow-sm space-y-3">
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 text-center text-slate-500 shadow-sm space-y-3">
           <p className="font-semibold text-slate-700">No testimonials or reviews found.</p>
           <button
             type="button"
@@ -239,10 +239,10 @@ export default function AdminReviews() {
 
       {/* Add / Edit Review Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-extrabold text-slate-900 text-base">
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
                 {editingReview ? 'Edit Review' : 'Add New Testimonial'}
               </h3>
               <button
@@ -255,7 +255,7 @@ export default function AdminReviews() {
             </div>
 
             <form onSubmit={handleSave} className="space-y-3.5">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Customer Name</label>
                   <input
@@ -280,7 +280,7 @@ export default function AdminReviews() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Trip Type</label>
                   <select

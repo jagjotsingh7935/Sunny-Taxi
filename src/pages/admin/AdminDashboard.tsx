@@ -81,14 +81,14 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-5 sm:space-y-8 max-w-7xl mx-auto min-w-0 max-w-full overflow-hidden">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-gold/15 text-gold-deep text-xs font-bold uppercase tracking-wider mb-2">
             Live Dispatch Overview
           </span>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+          <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight">
             Welcome back, Gagandeep
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Link
             to="/admin/routes"
             className="flex items-center gap-1.5 rounded-xl bg-gold-gradient px-3.5 py-2 text-xs font-bold text-obsidian shadow-sm transition hover:brightness-105 active:scale-95"

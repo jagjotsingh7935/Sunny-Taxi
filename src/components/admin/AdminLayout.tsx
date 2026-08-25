@@ -105,7 +105,7 @@ export function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-100 flex text-slate-900 font-sans">
+    <div className="min-h-screen bg-slate-100 flex text-slate-900 font-sans w-full max-w-full overflow-x-hidden">
       {/* Mobile Drawer Backdrop */}
       {sidebarOpen && (
         <div
@@ -227,32 +227,32 @@ export function AdminLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+      <div className="flex-1 flex flex-col min-w-0 min-h-screen max-w-full overflow-x-hidden">
         {/* Top Header */}
-        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between shrink-0 shadow-sm sticky top-0 z-20">
-          <div className="flex items-center gap-3">
+        <header className="h-16 bg-white border-b border-slate-200 px-3 sm:px-6 flex items-center justify-between shrink-0 shadow-sm sticky top-0 z-20">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition"
+              className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition shrink-0"
               aria-label="Open sidebar navigation"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 font-medium">
-              <Shield className="h-3.5 w-3.5 text-emerald-600" />
-              <span>CPVV Accredited Dispatch Portal</span>
+            <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500 font-medium truncate">
+              <Shield className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span className="truncate">CPVV Accredited Dispatch Portal</span>
               <span className="text-slate-300">·</span>
-              <span>Deanside, Melbourne VIC</span>
+              <span className="hidden md:inline">Deanside, Melbourne VIC</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Quick Reset Demo Data Button */}
             <button
               type="button"
               onClick={() => setConfirmResetOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50/90 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shadow-sm"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50/90 text-[0.72rem] sm:text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shadow-sm"
               title="Restore all default demo routes, fleet, bookings, quotes, and reviews"
             >
               <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
@@ -310,7 +310,7 @@ export function AdminLayout() {
         />
 
         {/* Routed Page Container */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-slate-50">
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 bg-slate-50 min-w-0 max-w-full overflow-x-hidden">
           <Outlet />
         </main>
       </div>

@@ -64,12 +64,12 @@ export default function AdminBookings() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-5 sm:space-y-6 max-w-7xl mx-auto min-w-0 max-w-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div>
           <span className="eyebrow">Dispatch &amp; Scheduled Trips</span>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+          <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
             Fixed Route Bookings ({bookings.length})
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
@@ -80,16 +80,16 @@ export default function AdminBookings() {
         <button
           type="button"
           onClick={() => setConfirmRestoreOpen(true)}
-          className="flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0"
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0 self-start md:self-auto"
         >
-          <RotateCcw className="h-4 w-4 text-amber-700" />
+          <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
           <span>Restore Demo Bookings</span>
         </button>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-        <div className="relative flex-1">
+      <div className="flex flex-col sm:flex-row gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm min-w-0">
+        <div className="relative flex-1 min-w-0">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             type="text"
@@ -100,7 +100,7 @@ export default function AdminBookings() {
           />
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-thin">
           {['all', 'confirmed', 'completed', 'cancelled'].map((st) => (
             <button
               key={st}
@@ -119,30 +119,30 @@ export default function AdminBookings() {
       </div>
 
       {/* Bookings List */}
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 min-w-0">
         {filteredBookings.map((b) => (
           <div
             key={b.id}
-            className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:border-gold-deep/40 transition space-y-4"
+            className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm hover:border-gold-deep/40 transition space-y-3.5 min-w-0 max-w-full overflow-hidden"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <span className="font-mono text-sm font-extrabold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span className="font-mono text-xs sm:text-sm font-extrabold text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded-lg">
                   #{b.reference}
                 </span>
-                <span className="text-xs text-slate-500 font-medium">
-                  Booked: {new Date(b.createdAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                <span className="text-[0.72rem] sm:text-xs text-slate-500 font-medium">
+                  {new Date(b.createdAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
 
               {/* Status Controller */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                 <select
                   value={b.adminStatus}
                   onChange={(e) =>
                     handleStatusChange(b.id, b.reference, e.target.value as BookingRecord['adminStatus'])
                   }
-                  className={`text-xs font-bold py-1 px-2.5 rounded-lg border cursor-pointer ${
+                  className={`text-xs font-bold py-1 px-2.5 rounded-lg border cursor-pointer flex-1 sm:flex-none ${
                     b.adminStatus === 'confirmed'
                       ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
                       : b.adminStatus === 'completed'
@@ -158,7 +158,7 @@ export default function AdminBookings() {
                 <button
                   type="button"
                   onClick={() => setDeletingBooking({ id: b.id, ref: b.reference })}
-                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition shrink-0"
                   title="Delete Record"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -167,36 +167,36 @@ export default function AdminBookings() {
             </div>
 
             {/* Core Trip Details */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 text-xs">
               {/* Pickup & Destination */}
-              <div className="space-y-1.5 md:col-span-2">
-                <div className="flex items-start gap-2">
+              <div className="space-y-2 md:col-span-2 min-w-0">
+                <div className="flex items-start gap-2 min-w-0">
                   <span className="h-2 w-2 rounded-full bg-gold-deep mt-1.5 shrink-0" />
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <span className="text-[0.65rem] uppercase font-bold text-slate-400">Pickup Location:</span>
-                    <p className="font-bold text-slate-900">{b.pickup.label}</p>
+                    <p className="font-bold text-slate-900 break-words">{b.pickup.label}</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-2 min-w-0">
                   <span className="h-2 w-2 rounded-full bg-slate-400 mt-1.5 shrink-0" />
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <span className="text-[0.65rem] uppercase font-bold text-slate-400">Destination:</span>
-                    <p className="font-bold text-slate-900">{b.dropoff.label}</p>
+                    <p className="font-bold text-slate-900 break-words">{b.dropoff.label}</p>
                   </div>
                 </div>
               </div>
 
               {/* Schedule & Fare */}
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-semibold">Scheduled Date:</span>
-                  <span className="font-bold text-slate-900">
-                    {new Date(b.scheduledFor).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5 min-w-0">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-semibold">Date:</span>
+                  <span className="font-bold text-slate-900 truncate">
+                    {new Date(b.scheduledFor).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-semibold">Vehicle Class:</span>
-                  <span className="font-bold text-slate-900 truncate max-w-[140px]">{b.vehicleName}</span>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-semibold">Vehicle:</span>
+                  <span className="font-bold text-slate-900 truncate">{b.vehicleName}</span>
                 </div>
                 <div className="flex items-center justify-between pt-1 border-t border-slate-200">
                   <span className="text-slate-500 font-semibold">Total Fare:</span>
@@ -206,24 +206,24 @@ export default function AdminBookings() {
             </div>
 
             {/* Customer Details Footer */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs text-slate-600 bg-slate-50/50 p-2.5 rounded-xl">
-              <div className="flex flex-wrap items-center gap-4">
-                <span className="flex items-center gap-1.5 font-bold text-slate-900">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2.5 border-t border-slate-100 text-xs text-slate-600 bg-slate-50/50 p-2.5 rounded-xl">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 min-w-0">
+                <span className="flex items-center gap-1.5 font-bold text-slate-900 shrink-0">
                   <User className="h-3.5 w-3.5 text-gold-deep" />
                   {b.customer.name}
                 </span>
                 <a
                   href={`tel:${b.customer.phone}`}
-                  className="flex items-center gap-1.5 text-slate-700 hover:text-gold-deep font-semibold"
+                  className="flex items-center gap-1.5 text-slate-700 hover:text-gold-deep font-semibold shrink-0"
                 >
                   <Phone className="h-3.5 w-3.5 text-emerald-600" />
                   {b.customer.phone}
                 </a>
                 <a
                   href={`mailto:${b.customer.email}`}
-                  className="flex items-center gap-1.5 text-slate-700 hover:text-gold-deep"
+                  className="flex items-center gap-1.5 text-slate-700 hover:text-gold-deep break-all"
                 >
-                  <Mail className="h-3.5 w-3.5 text-slate-400" />
+                  <Mail className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                   {b.customer.email}
                 </a>
               </div>
@@ -231,14 +231,14 @@ export default function AdminBookings() {
               <div className="flex items-center gap-2">
                 <span className="text-[0.7rem] uppercase font-bold text-slate-400">Payment:</span>
                 <span className="font-bold text-slate-800">
-                  {b.paymentMethod === 'card-online' ? 'Credit Card (Online)' : 'Pay Driver (EFTPOS/Cash)'}
+                  {b.paymentMethod === 'card-online' ? 'Credit Card' : 'Pay Driver'}
                 </span>
               </div>
             </div>
 
             {/* Special Notes & Flight Details */}
             {b.addons.notes && (
-              <p className="text-xs bg-amber-50/70 border border-amber-200/80 p-2 rounded-lg text-amber-900">
+              <p className="text-xs bg-amber-50/70 border border-amber-200/80 p-2.5 rounded-lg text-amber-900 break-words">
                 <strong className="font-bold">Passenger Notes:</strong> {b.addons.notes}
                 {b.addons.flightNumber && ` (Flight: ${b.addons.flightNumber})`}
               </p>

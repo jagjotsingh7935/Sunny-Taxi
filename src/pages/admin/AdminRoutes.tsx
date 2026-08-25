@@ -128,12 +128,12 @@ export default function AdminRoutes() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-5 sm:space-y-6 max-w-7xl mx-auto min-w-0 max-w-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div>
           <span className="eyebrow">Corridors &amp; Published Pricing</span>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+          <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
             Fixed Routes Management ({routes.length})
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
@@ -141,21 +141,21 @@ export default function AdminRoutes() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <button
             type="button"
             onClick={() => setConfirmRestoreOpen(true)}
-            className="flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0"
+            className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0"
             title="Reload default demo fixed routes"
           >
-            <RotateCcw className="h-4 w-4 text-amber-700" />
+            <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
             <span>Restore Demo Routes</span>
           </button>
 
           <button
             type="button"
             onClick={openCreateModal}
-            className="flex items-center gap-1.5 rounded-xl bg-gold-gradient px-4 py-2.5 text-xs font-bold text-obsidian shadow-gold transition hover:brightness-105 active:scale-95 shrink-0"
+            className="flex items-center justify-center gap-1.5 rounded-xl bg-gold-gradient px-4 py-2 text-xs font-bold text-obsidian shadow-gold transition hover:brightness-105 active:scale-95 shrink-0"
           >
             <Plus className="h-4 w-4" />
             <span>Add New Fixed Route</span>
@@ -164,8 +164,8 @@ export default function AdminRoutes() {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-        <div className="relative flex-1">
+      <div className="flex flex-col sm:flex-row gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm min-w-0">
+        <div className="relative flex-1 min-w-0">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             type="text"
@@ -176,7 +176,7 @@ export default function AdminRoutes() {
           />
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-thin">
           {['all', 'airport', 'city', 'tour', 'regional'].map((cat) => (
             <button
               key={cat}
@@ -194,9 +194,71 @@ export default function AdminRoutes() {
         </div>
       </div>
 
-      {/* Routes Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* Mobile Route Cards (< md screens) */}
+      <div className="md:hidden space-y-3 min-w-0">
+        {filteredRoutes.map((route) => (
+          <div
+            key={route.id}
+            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3 min-w-0 max-w-full overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <span
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-[0.62rem] font-extrabold uppercase tracking-wide mb-1 ${
+                    route.popular ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'
+                  }`}
+                >
+                  {route.popular ? 'Featured' : route.category}
+                </span>
+                <h4 className="font-bold text-slate-900 text-sm leading-snug break-words">
+                  {route.label}
+                </h4>
+                <p className="text-[0.7rem] text-slate-500 mt-0.5 break-words">
+                  {route.from.label} → {route.to.label}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => openEditModal(route)}
+                  className="p-1.5 rounded-lg text-slate-600 hover:bg-gold/15 hover:text-gold-deep transition"
+                  title="Edit Route"
+                >
+                  <Edit2 className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeletingRoute({ id: route.id, name: route.shortLabel })}
+                  className="p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition"
+                  title="Delete Route"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            {route.note && (
+              <p className="text-[0.68rem] text-gold-deep bg-gold/10 px-2.5 py-1 rounded font-semibold break-words">
+                {route.note}
+              </p>
+            )}
+
+            <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 text-xs">
+              <span className="text-slate-600 font-medium">
+                {route.distanceKm} km · {route.durationMins} mins
+              </span>
+              <span className="font-extrabold text-base text-gold-deep">
+                {currency(route.fixedPrice)}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Routes Table (>= md screens) */}
+      <div className="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden min-w-0">
+        <div className="overflow-x-auto scrollbar-thin">
           <table className="w-full text-left text-xs sm:text-sm">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 text-[0.68rem] uppercase tracking-wider font-bold">
               <tr>
@@ -210,13 +272,13 @@ export default function AdminRoutes() {
             <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
               {filteredRoutes.map((route) => (
                 <tr key={route.id} className="hover:bg-slate-50/80 transition">
-                  <td className="py-3.5 px-4 sm:px-6">
-                    <p className="font-bold text-slate-900 leading-tight">{route.label}</p>
-                    <p className="text-[0.7rem] text-slate-500 mt-0.5 font-normal">
+                  <td className="py-3.5 px-4 sm:px-6 min-w-[200px]">
+                    <p className="font-bold text-slate-900 leading-tight break-words">{route.label}</p>
+                    <p className="text-[0.7rem] text-slate-500 mt-0.5 font-normal break-words">
                       {route.from.label} → {route.to.label}
                     </p>
                     {route.note && (
-                      <span className="inline-block mt-1 text-[0.65rem] text-gold-deep bg-gold/10 px-2 py-0.5 rounded font-semibold">
+                      <span className="inline-block mt-1 text-[0.65rem] text-gold-deep bg-gold/10 px-2 py-0.5 rounded font-semibold break-words">
                         {route.note}
                       </span>
                     )}
@@ -264,41 +326,40 @@ export default function AdminRoutes() {
                   </td>
                 </tr>
               ))}
-              {filteredRoutes.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-500 space-y-3">
-                    <p className="font-semibold text-slate-700">No fixed routes found in the database.</p>
-                    <div className="flex items-center justify-center gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={openCreateModal}
-                        className="px-3.5 py-1.5 rounded-xl bg-gold-gradient text-xs font-bold text-obsidian shadow-sm"
-                      >
-                        + Add Route
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setConfirmRestoreOpen(true)}
-                        className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl border border-amber-300 bg-amber-50 text-xs font-bold text-amber-900 hover:bg-amber-100 transition shadow-sm"
-                      >
-                        <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
-                        <span>Restore Default Demo Routes</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
       </div>
 
+      {filteredRoutes.length === 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 text-center text-slate-500 shadow-sm space-y-3">
+          <p className="font-semibold text-slate-700">No fixed routes found in the database.</p>
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className="px-3.5 py-1.5 rounded-xl bg-gold-gradient text-xs font-bold text-obsidian shadow-sm"
+            >
+              + Add Route
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmRestoreOpen(true)}
+              className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl border border-amber-300 bg-amber-50 text-xs font-bold text-amber-900 hover:bg-amber-100 transition shadow-sm"
+            >
+              <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
+              <span>Restore Demo Routes</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Add / Edit Route Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-extrabold text-slate-900 text-base">
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base">
                 {editingRoute ? 'Edit Fixed Route' : 'Add New Fixed Route'}
               </h3>
               <button
@@ -311,7 +372,7 @@ export default function AdminRoutes() {
             </div>
 
             <form onSubmit={handleSave} className="space-y-3.5">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Short Label (Card title)</label>
                   <input
@@ -351,7 +412,7 @@ export default function AdminRoutes() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Origin Address</label>
                   <input
@@ -375,7 +436,7 @@ export default function AdminRoutes() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Destination Address</label>
                   <input
@@ -399,7 +460,7 @@ export default function AdminRoutes() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Distance (km)</label>
                   <input

@@ -44,11 +44,11 @@ export default function AdminSettings() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-5 sm:space-y-6 max-w-4xl mx-auto min-w-0 max-w-full overflow-hidden">
       {/* Header */}
-      <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
         <span className="eyebrow">Company Profile &amp; Accreditation</span>
-        <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+        <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
           Business &amp; Dispatch Settings
         </h1>
         <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">

@@ -94,12 +94,12 @@ export default function AdminFares() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-5 sm:space-y-6 max-w-7xl mx-auto min-w-0 max-w-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm">
         <div>
           <span className="eyebrow">Fixed Suburban Rates</span>
-          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
+          <h1 className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
             Suburban Fare Matrix ({suburbs.length} suburbs)
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5">
@@ -107,20 +107,20 @@ export default function AdminFares() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <button
             type="button"
             onClick={() => setConfirmRestoreOpen(true)}
-            className="flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0"
+            className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-900 hover:bg-amber-100 transition active:scale-95 shrink-0"
           >
-            <RotateCcw className="h-4 w-4 text-amber-700" />
+            <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
             <span>Restore Demo Fares</span>
           </button>
 
           <button
             type="button"
             onClick={openCreateModal}
-            className="flex items-center gap-1.5 rounded-xl bg-gold-gradient px-4 py-2.5 text-xs font-bold text-obsidian shadow-gold transition hover:brightness-105 active:scale-95 shrink-0"
+            className="flex items-center justify-center gap-1.5 rounded-xl bg-gold-gradient px-4 py-2 text-xs font-bold text-obsidian shadow-gold transition hover:brightness-105 active:scale-95 shrink-0"
           >
             <Plus className="h-4 w-4" />
             <span>Add Suburb Fare</span>
@@ -129,7 +129,7 @@ export default function AdminFares() {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200 shadow-sm min-w-0">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
@@ -142,9 +142,65 @@ export default function AdminFares() {
         </div>
       </div>
 
-      {/* Suburbs Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* Mobile Suburb Cards (< md) */}
+      <div className="md:hidden space-y-3 min-w-0">
+        {filteredSuburbs.map((s) => (
+          <div
+            key={`${s.suburb}-${s.postcode}`}
+            className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3 min-w-0 max-w-full overflow-hidden"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <h4 className="font-extrabold text-slate-900 text-sm">
+                  {s.suburb}{' '}
+                  <span className="font-mono text-xs text-slate-500 font-normal">({s.postcode})</span>
+                </h4>
+                <span className="text-[0.68rem] text-slate-500 font-medium">
+                  Region: {s.region} · {s.distanceFromCbdKm} km from CBD
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => openEditModal(s)}
+                  className="p-1.5 rounded-lg text-slate-600 hover:bg-gold/15 hover:text-gold-deep transition"
+                  title="Edit Fare"
+                >
+                  <Edit2 className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeletingSuburb(s)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition"
+                  title="Delete Suburb"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-xs">
+              <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-[0.65rem] text-slate-500 uppercase font-semibold block">To Melbourne CBD</span>
+                <span className="font-black text-sm text-gold-deep">
+                  {s.toCbd === 0 ? '—' : currency(s.toCbd)}
+                </span>
+              </div>
+              <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-[0.65rem] text-slate-500 uppercase font-semibold block">To MEL Airport</span>
+                <span className="font-black text-sm text-gold-deep">
+                  {currency(s.toTullamarine)}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Suburbs Table (>= md) */}
+      <div className="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden min-w-0">
+        <div className="overflow-x-auto scrollbar-thin">
           <table className="w-full text-left text-xs sm:text-sm">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 text-[0.68rem] uppercase tracking-wider font-bold">
               <tr>
@@ -190,47 +246,46 @@ export default function AdminFares() {
                   </td>
                 </tr>
               ))}
-              {filteredSuburbs.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500 space-y-3">
-                    <p className="font-semibold text-slate-700">No suburb fares found.</p>
-                    <div className="flex items-center justify-center gap-2 pt-2">
-                      <button
-                        type="button"
-                        onClick={openCreateModal}
-                        className="px-3.5 py-1.5 rounded-xl bg-gold-gradient text-xs font-bold text-obsidian shadow-sm"
-                      >
-                        + Add Suburb Fare
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setConfirmRestoreOpen(true)}
-                        className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl border border-amber-300 bg-amber-50 text-xs font-bold text-amber-900 hover:bg-amber-100 transition shadow-sm"
-                      >
-                        <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
-                        <span>Restore Default Suburban Fares</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
       </div>
 
+      {filteredSuburbs.length === 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 text-center text-slate-500 shadow-sm space-y-3">
+          <p className="font-semibold text-slate-700">No suburb fares found.</p>
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className="px-3.5 py-1.5 rounded-xl bg-gold-gradient text-xs font-bold text-obsidian shadow-sm"
+            >
+              + Add Suburb Fare
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmRestoreOpen(true)}
+              className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl border border-amber-300 bg-amber-50 text-xs font-bold text-amber-900 hover:bg-amber-100 transition shadow-sm"
+            >
+              <RotateCcw className="h-3.5 w-3.5 text-amber-700" />
+              <span>Restore Default Suburban Fares</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Add / Edit Suburb Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 max-w-md w-full shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="font-extrabold text-slate-900 text-base">
+              <h3 className="font-extrabold text-slate-900 text-sm sm:text-base truncate pr-2">
                 {editingSuburb ? `Edit Fare: ${editingSuburb.suburb}` : 'Add Suburb Fare'}
               </h3>
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg shrink-0"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -249,7 +304,7 @@ export default function AdminFares() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Postcode</label>
                   <input
@@ -274,7 +329,7 @@ export default function AdminFares() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 <div>
                   <label className="field-label">Rate to CBD ($)</label>
                   <input
